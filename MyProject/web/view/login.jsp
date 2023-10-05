@@ -12,9 +12,12 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>ATTENDANCE MANAGEMENT</h1>
-        username: <input type="text" name="username" value=""> <br><!-- comment -->
-        password: <input type="text" name="password" value=""> <br>
-        <input type="submit" name="login" value="Login"> <br>
+        <form action="login" method="">
+            <h1>ATTENDANCE MANAGEMENT</h1>
+            username: <input type="text" name="username" value=""> <br><!-- comment -->
+            password: <input type="text" name="password" value=""> <br>
+            <input type="submit" name="login" value="Login"> <br>
+        </form>
+
     </body>
 </html>
