@@ -20,23 +20,23 @@ import model.Student;
  */
 public class AttendanceDBContext extends DBContext<Attendance> {
 
-    public ArrayList<Attendance> getAttendancesBySession(int sesid) {
+    public ArrayList<Attendance> getAttendancesBySession(int sesid, int iid) {
         ArrayList<Attendance> atts = new ArrayList<>();
         try {
-            String sql = "SELECT s.stuid,s.stuname,\n" +
-"	  ISNULL(a.status,0) as [status]\n" +
-"	  ,ISNULL(a.description,'') as [description],\n" +
-"	   ISNULL(a.att_datetime,GETDATE()) as att_datetime\n" +
-"	  FROM [Session] ses INNER JOIN [Group] g ON g.gid = ses.gid\n" +
-"									INNER JOIN Group_Student gs ON g.gid = gs.gid\n" +
-"									INNER JOIN Student s ON s.stuid = gs.stuid\n" +
-"									LEFT JOIN Attendance a ON a.sesid = ses.sesid AND s.stuid = a.stuid\n"
-                    + "	  WHERE ses.sesid = ?";
+            String sql = "SELECT s.stuid,s.stuname,\n"
+                    + "	  ISNULL(a.status,0) as [status]\n"
+                    + "	  ,ISNULL(a.description,'') as [description],\n"
+                    + "	   ISNULL(a.att_datetime,GETDATE()) as att_datetime\n"
+                    + "	  FROM [Session] ses INNER JOIN [Group] g ON g.gid = ses.gid\n"
+                    + "									INNER JOIN Group_Student gs ON g.gid = gs.gid\n"
+                    + "									INNER JOIN Student s ON s.stuid = gs.stuid\n"
+                    + "									LEFT JOIN Attendance a ON a.sesid = ses.sesid AND s.stuid = a.stuid\n"
+                    + "	  WHERE ses.sesid = ? AND g.sup_iis = ?";
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, sesid);
+            stm.setInt(2, iid);
             ResultSet rs = stm.executeQuery();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Attendance att = new Attendance();
                 Student s = new Student();
                 Session ses = new Session();
@@ -50,7 +50,7 @@ public class AttendanceDBContext extends DBContext<Attendance> {
                 att.setDatetime(rs.getTimestamp("att_datetime"));
                 atts.add(att);
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(AttendanceDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }

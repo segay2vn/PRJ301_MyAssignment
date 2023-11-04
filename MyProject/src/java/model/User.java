@@ -11,8 +11,27 @@ package model;
 public class User implements IBaseModel {
 
     private String username;
+    private int id;
+    private int sesid;
+
+    public int getSesid() {
+        return sesid;
+    }
+
+    public void setSesid(int sesid) {
+        this.sesid = sesid;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     private String password;
-    private String displayname;
+
 
     public String getUsername() {
         return username;
@@ -30,11 +49,4 @@ public class User implements IBaseModel {
         this.password = password;
     }
 
-    public String getDisplayname() {
-        return displayname;
-    }
-
-    public void setDisplayname(String displayname) {
-        this.displayname = displayname;
-    }
 }

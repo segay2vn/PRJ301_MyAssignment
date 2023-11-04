@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Attendance;
 import model.Group;
+import model.Instructor;
 import model.Room;
 import model.Session;
 import model.Subject;
@@ -73,17 +74,20 @@ public class SessionDBContext extends DBContext<Session> {
         return sessions;
     }
 
-    public Session getSessions(int sesid) {
+    public Session getSessions(int sesid, int id) {
         try {
             String sql = "SELECT  \n"
-                    + "	ses.sesid,ses.[date],ses.[index],ses.isAtt,r.roomid,sub.subid,sub.subname,g.gid,g.gname,t.tid,t.[description]\n"
-                    + "FROM [Session] ses INNER JOIN [Group] g ON ses.gid = g.gid\n"
-                    + "							INNER JOIN [Subject] sub ON g.subid = sub.subid\n"
-                    + "							INNER JOIN Room r ON r.roomid = ses.rid\n"
-                    + "							INNER JOIN TimeSlot t ON ses.tid = t.tid\n"
-                    + "WHERE ses.sesid = ?";
+                    + "    ses.sesid, ses.[date], ses.[index], ses.isAtt, r.roomid, sub.subid, sub.subname, g.gid, g.gname, t.tid, t.[description]\n"
+                    + "FROM [Session] ses \n"
+                    + "INNER JOIN [Group] g ON ses.gid = g.gid\n"
+                    + "INNER JOIN [Subject] sub ON g.subid = sub.subid\n"
+                    + "INNER JOIN Room r ON r.roomid = ses.rid\n"
+                    + "INNER JOIN TimeSlot t ON ses.tid = t.tid\n"
+                    + "INNER JOIN Instructor i ON g.[sup_iis] = i.iid\n"
+                    + "WHERE ses.sesid = ? AND i.iid = ?";
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, sesid);
+            stm.setInt(2, id);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Session session = new Session();
@@ -117,6 +121,26 @@ public class SessionDBContext extends DBContext<Session> {
         }
         return null;
     }
+
+    public int getIid(int sesid) {
+        try {
+            String sql = "SELECT iid\n"
+                    + "FROM Session\n"
+                    + "WHERE sesid = ?;";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, sesid);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                int in = rs.getInt("iid");
+                return in;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(SessionDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
 
     public void addAttendences(Session ses) {
         try {

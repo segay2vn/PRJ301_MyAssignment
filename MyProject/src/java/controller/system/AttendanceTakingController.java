@@ -5,6 +5,7 @@
 
 package controller.system;
 
+import controller.BasedRequiredAuthenticationController;
 import dal.AttendanceDBContext;
 import dal.SessionDBContext;
 import java.io.IOException;
@@ -13,16 +14,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import model.Attendance;
 import model.Session;
 import model.Student;
+import model.User;
 
 /**
  *
  * @author pc
  */
-public class AttendanceTakingController extends HttpServlet {
+public class AttendanceTakingController extends BasedRequiredAuthenticationController {
    
   
 
@@ -35,15 +38,17 @@ public class AttendanceTakingController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response, User user)
     throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("uid");
         SessionDBContext db = new SessionDBContext();
-        int id = Integer.parseInt(request.getParameter("id"));
-        Session ses = db.getSessions(id);
+        int sesid = Integer.parseInt(request.getParameter("id"));
+        Session ses = db.getSessions(sesid,id);
         request.setAttribute("ses",ses);
         
         AttendanceDBContext attDb = new AttendanceDBContext();
-        ArrayList<Attendance> atts = attDb.getAttendancesBySession(id);
+        ArrayList<Attendance> atts = attDb.getAttendancesBySession(sesid, id);
         
         request.setAttribute("atts", atts);
         request.getRequestDispatcher("../view/instructor/att.jsp").forward(request, response);
@@ -57,7 +62,7 @@ public class AttendanceTakingController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response, User user)
     throws ServletException, IOException {
         Session ses = new Session();
         ses.setId(Integer.parseInt(request.getParameter("sesid")));
@@ -74,7 +79,8 @@ public class AttendanceTakingController extends HttpServlet {
         }
         SessionDBContext sesDB = new SessionDBContext();
         sesDB.addAttendences(ses);
-        response.getWriter().println("done");
+        sesDB.getIid(Integer.parseInt(request.getParameter("sesid")));
+        response.sendRedirect("timetable?id="+sesDB.getIid(Integer.parseInt(request.getParameter("sesid"))));
     }
 
     /** 

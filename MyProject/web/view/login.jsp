@@ -91,12 +91,21 @@
                 width: 80%;
                 margin: 0 auto;
             }
+            .form-group.remember-group {
+                display: flex;
+                align-items: center;
+            }
+
+            .form-group.remember-group input[type="checkbox"] {
+                margin-right: 10px;
+            }
+
         </style>
 
     </head>
     <body>
-        <img src="../img/logo-home-f72440cc.png" alt="School Logo" class="logo"/>
-        <form action="login" method="">
+        <img src="img/logo-home-f72440cc.png" alt="School Logo" class="logo"/>
+        <form action="login" method="post">
             <h1>FPT University Academic Portal</h1>
             <div class="form-group">
                 <label for="username">Username</label>
@@ -105,6 +114,10 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group  remember-group">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember"><i>Remember password</i></label>
             </div>
             <input type="submit" name="login" value="Login">
         </form>
@@ -115,4 +128,5 @@
         </footer>
 
     </body>
+
 </html>
